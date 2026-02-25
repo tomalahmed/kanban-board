@@ -1,0 +1,296 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowBoard - Kanban Task Manager</title>
+    <meta name="description" content="Modern real-time Kanban task manager">
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body class="min-h-screen board-bg text-slate-100 antialiased">
+    <div class="bg-orb bg-orb-a"></div>
+    <div class="bg-orb bg-orb-b"></div>
+
+    <header class="sticky top-0 z-50 border-b border-white/10 bg-slate-950/70 backdrop-blur-xl">
+        <div class="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-400/20 ring-1 ring-cyan-300/40">
+                        <i class="fa-solid fa-table-columns text-cyan-200"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-extrabold tracking-tight">FlowBoard</h1>
+                        <p class="text-xs text-slate-300" id="header-task-count">Loading...</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex w-full items-center gap-2 rounded-xl border border-white/10 bg-slate-900/70 px-3 py-2 sm:w-auto">
+                        <i class="fa-solid fa-search text-xs text-slate-400"></i>
+                        <input id="search-input" type="text" placeholder="Search title, label, description"
+                            class="w-64 bg-transparent text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none">
+                        <button id="clear-search-btn" class="hidden text-slate-400 transition hover:text-white" title="Clear search">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <button id="filter-toggle-btn"
+                        class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-slate-100 transition hover:bg-white/10">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span>Filter</span>
+                        <span id="filter-badge" class="hidden rounded-full bg-cyan-400 px-1.5 py-0.5 text-[11px] font-bold text-slate-950">0</span>
+                    </button>
+
+                    <button id="new-task-btn"
+                        class="inline-flex items-center gap-2 rounded-xl bg-cyan-400 px-3 py-2 text-sm font-bold text-slate-950 transition hover:bg-cyan-300">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>New Task</span>
+                    </button>
+
+                    <button id="export-btn"
+                        class="inline-flex items-center gap-2 rounded-xl border border-cyan-300/40 bg-cyan-400/10 px-3 py-2 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-400/20"
+                        title="Export to Excel">
+                        <i class="fa-solid fa-file-export"></i>
+                        <span class="hidden sm:inline">Export Excel</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="filter-panel" class="hidden rounded-2xl border border-white/10 bg-slate-900/70 p-3">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="mr-1 text-xs font-bold uppercase tracking-wide text-slate-400">Priority</span>
+                    <button data-filter="priority" data-value="high" class="filter-btn filter-chip chip-high">High</button>
+                    <button data-filter="priority" data-value="medium" class="filter-btn filter-chip chip-medium">Medium</button>
+                    <button data-filter="priority" data-value="low" class="filter-btn filter-chip chip-low">Low</button>
+
+                    <span class="ml-3 mr-1 text-xs font-bold uppercase tracking-wide text-slate-400">Label</span>
+                    <button data-filter="label" data-value="Design" class="filter-btn filter-chip">Design</button>
+                    <button data-filter="label" data-value="Development" class="filter-btn filter-chip">Development</button>
+                    <button data-filter="label" data-value="Documentation" class="filter-btn filter-chip">Documentation</button>
+                    <button data-filter="label" data-value="Meeting" class="filter-btn filter-chip">Meeting</button>
+                    <button data-filter="label" data-value="Research" class="filter-btn filter-chip">Research</button>
+                    <button data-filter="label" data-value="SEO" class="filter-btn filter-chip">SEO</button>
+
+                    <button id="clear-filters-btn" class="ml-auto rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white">
+                        Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <section class="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <div class="stat-card border-cyan-300/30">
+                <p class="stat-label">Total Tasks</p>
+                <p class="stat-value" id="stat-total">0</p>
+            </div>
+            <div class="stat-card border-amber-300/30">
+                <p class="stat-label">In Progress</p>
+                <p class="stat-value" id="stat-inprogress">0</p>
+            </div>
+            <div class="stat-card border-emerald-300/30">
+                <p class="stat-label">Completed</p>
+                <p class="stat-value" id="stat-done">0</p>
+            </div>
+            <div class="stat-card border-fuchsia-300/30">
+                <p class="stat-label">Progress</p>
+                <p class="stat-value" id="stat-progress">0%</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                <article class="column-shell">
+                    <div class="column-head">
+                        <div class="flex items-center gap-2">
+                            <span class="status-dot bg-sky-400"></span>
+                            <h2>To Do</h2>
+                            <span id="count-todo" class="count-pill">0</span>
+                        </div>
+                        <button class="add-task-col-btn add-col-btn" data-column="todo" title="Add task">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="kanban-column-body">
+                        <div id="drop-todo" class="drop-zone space-y-3" data-column="todo"></div>
+                        <button class="add-task-col-btn add-task-inline" data-column="todo">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add Task</span>
+                        </button>
+                    </div>
+                </article>
+
+                <article class="column-shell">
+                    <div class="column-head">
+                        <div class="flex items-center gap-2">
+                            <span class="status-dot bg-amber-400 pulse-soft"></span>
+                            <h2>In Progress</h2>
+                            <span id="count-inprogress" class="count-pill">0</span>
+                        </div>
+                        <button class="add-task-col-btn add-col-btn" data-column="inprogress" title="Add task">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="kanban-column-body">
+                        <div id="drop-inprogress" class="drop-zone space-y-3" data-column="inprogress"></div>
+                        <button class="add-task-col-btn add-task-inline" data-column="inprogress">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add Task</span>
+                        </button>
+                    </div>
+                </article>
+
+                <article class="column-shell">
+                    <div class="column-head">
+                        <div class="flex items-center gap-2">
+                            <span class="status-dot bg-emerald-400"></span>
+                            <h2>Done</h2>
+                            <span id="count-done" class="count-pill">0</span>
+                        </div>
+                        <button class="add-task-col-btn add-col-btn" data-column="done" title="Add task">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="kanban-column-body">
+                        <div id="drop-done" class="drop-zone space-y-3" data-column="done"></div>
+                        <button class="add-task-col-btn add-task-inline" data-column="done">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add Task</span>
+                        </button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <footer class="mt-6 rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+            <div class="flex flex-wrap items-center justify-between gap-3 text-sm">
+                <div class="flex items-center gap-3 text-slate-300">
+                    <span class="inline-flex items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-300/10 px-2.5 py-1 text-xs font-semibold text-emerald-200">
+                        <span class="h-2 w-2 rounded-full bg-emerald-300 pulse-soft"></span>
+                        <span id="sync-status">Live sync enabled</span>
+                    </span>
+                    <span>Last updated <strong id="last-updated" class="font-semibold text-white">just now</strong></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="footer-export-btn" class="rounded-lg border border-cyan-300/30 px-3 py-2 text-cyan-200 transition hover:bg-cyan-400/15">
+                        <i class="fa-solid fa-file-export"></i>
+                        <span>Export Excel</span>
+                    </button>
+                    <button id="reset-btn" class="rounded-lg border border-red-300/30 px-3 py-2 text-red-200 transition hover:bg-red-400/15">
+                        <i class="fa-solid fa-arrow-rotate-left"></i>
+                        <span>Reset Board</span>
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <div id="task-modal" class="modal-shell hidden">
+        <div class="modal-panel">
+            <div class="modal-head">
+                <h2 id="modal-title">New Task</h2>
+                <button id="close-modal-btn" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="modal-body">
+                <div>
+                    <label class="input-label">Title <span class="text-red-400">*</span></label>
+                    <input type="text" id="modal-task-title" placeholder="Enter task title" class="form-input">
+                    <p id="title-error" class="mt-1 hidden text-xs text-red-400">Title is required</p>
+                </div>
+
+                <div>
+                    <label class="input-label">Description</label>
+                    <textarea id="modal-task-desc" placeholder="Add a description" rows="3" class="form-input resize-none"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="input-label">Column</label>
+                        <select id="modal-task-column" class="form-input">
+                            <option value="todo">To Do</option>
+                            <option value="inprogress">In Progress</option>
+                            <option value="done">Done</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="input-label">Priority</label>
+                        <select id="modal-task-priority" class="form-input">
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="input-label">Labels</label>
+                    <div id="label-checkboxes" class="mt-2 flex flex-wrap gap-2"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="input-label">Due Date</label>
+                        <input type="date" id="modal-task-duedate" class="form-input">
+                    </div>
+                    <div>
+                        <label class="input-label">Progress (0-100)</label>
+                        <input type="number" id="modal-task-progress" min="0" max="100" placeholder="50" class="form-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-foot">
+                <button id="delete-task-btn" class="hidden rounded-lg border border-red-300/30 px-3 py-2 text-sm font-semibold text-red-200 transition hover:bg-red-400/15">
+                    <i class="fa-solid fa-trash"></i>
+                    <span>Delete</span>
+                </button>
+                <div class="ml-auto flex items-center gap-2">
+                    <button id="cancel-modal-btn" class="rounded-lg border border-white/10 px-3 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10">Cancel</button>
+                    <button id="save-task-btn" class="rounded-lg bg-cyan-400 px-3 py-2 text-sm font-bold text-slate-950 transition hover:bg-cyan-300">Save Task</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="modal-shell hidden">
+        <div class="modal-panel max-w-md">
+            <div class="p-6 text-center">
+                <div class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-red-300/15 text-red-300">
+                    <i class="fa-solid fa-trash"></i>
+                </div>
+                <h3 class="text-lg font-bold">Delete Task?</h3>
+                <p class="mt-2 text-sm text-slate-300">
+                    This action cannot be undone. "<span id="confirm-task-name" class="font-semibold text-white"></span>" will be removed.
+                </p>
+                <div class="mt-5 flex justify-center gap-2">
+                    <button id="confirm-cancel-btn" class="rounded-lg border border-white/10 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10">Cancel</button>
+                    <button id="confirm-delete-btn" class="rounded-lg bg-red-400 px-4 py-2 text-sm font-bold text-slate-950 transition hover:bg-red-300">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-5 right-5 z-50 hidden">
+        <div class="toast-card">
+            <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-300"></i>
+            <span id="toast-message" class="text-sm font-semibold"></span>
+        </div>
+    </div>
+
+    <script src="./app.js"></script>
+</body>
+
+</html>
