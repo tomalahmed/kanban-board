@@ -92,85 +92,106 @@
 
     <main class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <section class="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <div class="stat-card border-cyan-300/30">
-                <p class="stat-label">Total Tasks</p>
-                <p class="stat-value" id="stat-total">0</p>
-            </div>
-            <div class="stat-card border-amber-300/30">
-                <p class="stat-label">In Progress</p>
-                <p class="stat-value" id="stat-inprogress">0</p>
-            </div>
-            <div class="stat-card border-emerald-300/30">
-                <p class="stat-label">Completed</p>
-                <p class="stat-value" id="stat-done">0</p>
-            </div>
-            <div class="stat-card border-fuchsia-300/30">
-                <p class="stat-label">Progress</p>
-                <p class="stat-value" id="stat-progress">0%</p>
-            </div>
-        </section>
+    <div class="stat-card border-cyan-300/30">
+        <p class="stat-label inline-flex items-center gap-1">
+            <span>Total Tasks</span>
+            <i class="fa-solid fa-list-check"></i>
+        </p>
+        <p class="stat-value" id="stat-total">0</p>
+    </div>
+    <div class="stat-card border-amber-300/30">
+        <p class="stat-label inline-flex items-center gap-1">
+            <span>In Progress</span>
+            <i class="fa-solid fa-spinner"></i>
+        </p>
+        <p class="stat-value" id="stat-inprogress">0</p>
+    </div>
+    <div class="stat-card border-emerald-300/30">
+        <p class="stat-label inline-flex items-center gap-1">
+            <span>Completed</span>
+            <i class="fa-solid fa-circle-check"></i>
+        </p>
+        <p class="stat-value" id="stat-done">0</p>
+    </div>
+    <div class="stat-card border-fuchsia-300/30">
+        <p class="stat-label inline-flex items-center gap-1">
+            <span>Progress</span>
+            <i class="fa-solid fa-chart-line"></i>
+        </p>
+        <p class="stat-value" id="stat-progress">0%</p>
+    </div>
+</section>
 
         <section>
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
                 <article class="column-shell">
-                    <div class="column-head">
-                        <div class="flex items-center gap-2">
-                            <span class="status-dot bg-sky-400"></span>
-                            <h2>To Do</h2>
-                            <span id="count-todo" class="count-pill">0</span>
-                        </div>
-                        <button class="add-task-col-btn add-col-btn" data-column="todo" title="Add task">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                    </div>
-                    <div class="kanban-column-body">
-                        <div id="drop-todo" class="drop-zone space-y-3" data-column="todo"></div>
-                        <button class="add-task-col-btn add-task-inline" data-column="todo">
-                            <i class="fa-solid fa-plus"></i>
-                            <span>Add Task</span>
-                        </button>
-                    </div>
-                </article>
+    <div class="column-head">
+        <div class="flex items-center gap-2">
+            <span class="status-dot bg-sky-400"></span>
+            <h2 class="inline-flex items-center gap-1">
+                <span>To Do</span>
+                <i class="fa-solid fa-list"></i>
+            </h2>
+            <span id="count-todo" class="count-pill">0</span>
+        </div>
+        <button class="add-task-col-btn add-col-btn" data-column="todo" title="Add task">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+    </div>
+    <div class="kanban-column-body">
+        <div id="drop-todo" class="drop-zone space-y-3" data-column="todo"></div>
+        <button class="add-task-col-btn add-task-inline" data-column="todo">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add Task</span>
+        </button>
+    </div>
+</article>
 
-                <article class="column-shell">
-                    <div class="column-head">
-                        <div class="flex items-center gap-2">
-                            <span class="status-dot bg-amber-400 pulse-soft"></span>
-                            <h2>In Progress</h2>
-                            <span id="count-inprogress" class="count-pill">0</span>
-                        </div>
-                        <button class="add-task-col-btn add-col-btn" data-column="inprogress" title="Add task">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                    </div>
-                    <div class="kanban-column-body">
-                        <div id="drop-inprogress" class="drop-zone space-y-3" data-column="inprogress"></div>
-                        <button class="add-task-col-btn add-task-inline" data-column="inprogress">
-                            <i class="fa-solid fa-plus"></i>
-                            <span>Add Task</span>
-                        </button>
-                    </div>
-                </article>
+<article class="column-shell">
+    <div class="column-head">
+        <div class="flex items-center gap-2">
+            <span class="status-dot bg-amber-400 pulse-soft"></span>
+            <h2 class="inline-flex items-center gap-1">
+                <span>In Progress</span>
+                <i class="fa-solid fa-spinner"></i>
+            </h2>
+            <span id="count-inprogress" class="count-pill">0</span>
+        </div>
+        <button class="add-task-col-btn add-col-btn" data-column="inprogress" title="Add task">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+    </div>
+    <div class="kanban-column-body">
+        <div id="drop-inprogress" class="drop-zone space-y-3" data-column="inprogress"></div>
+        <button class="add-task-col-btn add-task-inline" data-column="inprogress">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add Task</span>
+        </button>
+    </div>
+</article>
 
-                <article class="column-shell">
-                    <div class="column-head">
-                        <div class="flex items-center gap-2">
-                            <span class="status-dot bg-emerald-400"></span>
-                            <h2>Done</h2>
-                            <span id="count-done" class="count-pill">0</span>
-                        </div>
-                        <button class="add-task-col-btn add-col-btn" data-column="done" title="Add task">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                    </div>
-                    <div class="kanban-column-body">
-                        <div id="drop-done" class="drop-zone space-y-3" data-column="done"></div>
-                        <button class="add-task-col-btn add-task-inline" data-column="done">
-                            <i class="fa-solid fa-plus"></i>
-                            <span>Add Task</span>
-                        </button>
-                    </div>
-                </article>
+<article class="column-shell">
+    <div class="column-head">
+        <div class="flex items-center gap-2">
+            <span class="status-dot bg-emerald-400"></span>
+            <h2 class="inline-flex items-center gap-1">
+                <span>Done</span>
+                <i class="fa-solid fa-circle-check"></i>
+            </h2>
+            <span id="count-done" class="count-pill">0</span>
+        </div>
+        <button class="add-task-col-btn add-col-btn" data-column="done" title="Add task">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+    </div>
+    <div class="kanban-column-body">
+        <div id="drop-done" class="drop-zone space-y-3" data-column="done"></div>
+        <button class="add-task-col-btn add-task-inline" data-column="done">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add Task</span>
+        </button>
+    </div>
+</article>
             </div>
         </section>
 
